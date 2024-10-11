@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Prediction & Analytics</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons (Optional) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        /* Sidebar Styling */
+        body {
+            display: flex;
+            flex-direction: column;
+            /* Changed to column for footer alignment */
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            background-color: #343a40;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link {
+            color: #ddd;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+
+
+        /* Top Navbar */
+        .top-navbar {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #383c44;
+            border-bottom: 1px solid #dee2e6;
+            position: fixed;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            /* Center the content horizontally */
+            align-items: center;
+            text-align: center;
+        }
+
+        .top-navbar .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #dee2e6;
+            margin: 0;
+            /* Remove extra margin */
+        }
+
+
+        /* Adjust content when navbar is fixed */
+        .main-content {
+            margin-top: 100px;
+        }
+
+        /* Form Styling */
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        /* Card Styling */
+        .stat-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: #007bff;
+        }
+
+        .stat-card h4 {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .stat-card p {
+            color: #6c757d;
+        }
+
+        /* Centering Analytics Section */
+        #analytics-section {
+            display: flex;
+            justify-content: center;
+            /* Center cards horizontally */
+            gap: 20px;
+            /* Space between cards */
+            margin-bottom: 40px;
+            /* Space below analytics section */
+            flex-wrap: wrap;
+            width: 100%;
+            /* Set the desired width (e.g., 80% of its parent container) */
+        }
+
+        #preloader {
+            background-color: #fff;
+            /* Background color without the GIF */
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            /* Center content horizontally */
+            align-items: center;
+            /* Center content vertically */
+        }
+
+        .preloader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loading-icon {
+            background: url(../static/img/Hourglass.gif) no-repeat center center;
+            background-size: 50px;
+            /* Adjust size as needed */
+            width: 50px;
+            height: 50px;
+        }
+
+        #preloader p {
+            margin-top: 15px;
+            /* Adjust spacing between GIF and text */
+            font-size: 1.2rem;
+            color: black;
+        }
+
+
+        /* Footer Styling */
+        footer {
+            background-color: #343a40;
+            /* Dark background */
+            color: #fff;
+            /* White text */
+            text-align: center;
+            /* Centered text */
+            padding: 10px 0;
+            /* Padding for spacing */
+            position: relative;
+            /* Allow footer to be at the bottom */
+            bottom: 0;
+            /* Stick to bottom */
+            width: 100%;
+            /* Full width */
+        }
+
+        /* Modal Styling */
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .error-message {
+            color: red;
+            display: none;
+            /* Hide error messages initially */
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-width: 100px;
+                max-width: 100px;
+            }
+
+            .sidebar .nav-link {
+                text-align: center;
+                padding: 10px;
+            }
+
+            .sidebar .nav-link span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="loading-icon"></div>
+            <p>Please Wait...</p>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="content flex-grow-1">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="navbar-brand">
+                Job Prediction & Analytics
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="container">
+                <!-- Analytics Section -->
+                <div id="analytics-section" class="mb-5">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <h4 data-stat="total">{{ data.total }}</h4> <!-- Total Predictions -->
+                            <p>Total Predictions</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <i class="fas fa-briefcase"></i>
+                            <h4 data-stat="positive">{{ data.positive }}</h4> <!-- Leave (Positive Predictions) -->
+                            <p>Leave</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <i class="fas fa-chart-line"></i>
+                            <h4 data-stat="negative">{{ data.negative }}</h4> <!-- Stay (Negative Predictions) -->
+                            <p>Stay</p>
+                        </div>
+                    </div>
+                    <!-- <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i> 
+                            <h4>71%</h4>
+                            <p>Model Accuracy</p>
+                        </div>
+                    </div> -->
+                </div>
+                <!-- Job Prediction Form Section -->
+                <div class="form-container mb-5">
+                    <h2>Job Prediction Form</h2>
+                    <form id="prediction-form" action="/" method="POST">
+                        <div class="mb-3">
+                            <label for="city_development_index" class="form-label">City Development Index</label>
+                            <input type="number" step="0.01" class="form-control" id="city_development_index"
+                                name="city_development_index" placeholder="ex. 0.78" min="0" max="1" required>
+                            <div class="error-message" id="city-development-error">Please enter a value between 0 and 1.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="relevent_experience" class="form-label">Relevant Experience <span
+                                    class="text-muted">(Yes/No)</span></label>
+                            <select class="form-select" id="relevent_experience" name="relevent_experience" required>
+                                <option value="" disabled selected>Select your option</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="education_level" class="form-label">Education Level</label>
+                            <select class="form-select" id="education_level" name="education_level" required>
+                                <option value="" disabled selected>Select your education level</option>
+                                <option value="graduate">Graduate</option>
+                                <option value="masters">Masters</option>
+                                <option value="high_school">High School</option>
+                                <option value="phd">PhD</option>
+                                <option value="primary_school">Primary School</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="total_experience" class="form-label">Total Experience <span
+                                    class="text-muted">(Years)</span></label>
+                            <input type="number" class="form-control" id="total_experience" name="total_experience"
+                                placeholder="ex. 15" min="0" max="60" required>
+                            <div class="error-message" id="total-experience-error">Total experience must be an integer
+                                between 0 and 60.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="last_new_job_gap" class="form-label">Last New Job Gap <span
+                                    class="text-muted">(Years)</span></label>
+                            <input type="number" class="form-control" id="last_new_job_gap" name="last_new_job_gap"
+                                placeholder="ex. 2" min="0" max="60" required>
+                            <div class="error-message" id="last-job-gap-error">Last new job gap must be an integer
+                                between 0 and 60.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Predict</button>
+                            <button type="reset" class="btn btn-secondary">Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Prediction History Section -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="mb-0">&copy; Team QuantaML</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Form submission handling
+            $('#prediction-form').submit(function (event) {
+                event.preventDefault(); // Prevent default form submission
+                const formData = $(this).serialize(); // Serialize form data
+
+                // Send AJAX request to server
+                $.ajax({
+                    type: 'POST',
+                    url: '/', // Your prediction endpoint
+                    data: formData,
+                    success: function (response) {
+                        const predictedResult = response.prediction;
+
+                        // Construct a sentence based on the prediction result
+                        let predictionSentence = '';
+                        if (predictedResult === 1) {
+                            predictionSentence = 'The model predicts that the employee is likely to leave the job.';
+                        } else if (predictedResult === 0) {
+                            predictionSentence = 'The model predicts that the employee is likely to stay at the job.';
+                        }
+
+
+
+                        // Adjust based on your response structure
+                        $('#predictionModal .modal-body').html(predictionSentence); // Inject prediction result
+
+                        // Show the modal
+                        $('#predictionModal').modal('show');
+
+                        // Update statistics dynamically
+                        $('h4[data-stat="total"]').text(response.total);
+                        $('h4[data-stat="positive"]').text(response.positive);
+                        $('h4[data-stat="negative"]').text(response.negative);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        var loader = document.getElementById("preloader");
+        window.addEventListener("load", function () {
+            setTimeout(function () {
+                loader.style.display = "none";
+            }, 1000);
+        })
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to validate City Development Index
+        function validateCityDevelopmentIndex() {
+            const cityIndex = parseFloat(document.getElementById("city_development_index").value);
+            const cityError = document.getElementById("city-development-error");
+            if (isNaN(cityIndex) || cityIndex < 0 || cityIndex > 1) {
+                cityError.style.display = "block"; // Show error message
+            } else {
+                cityError.style.display = "none"; // Hide error message
+            }
+        }
+
+        // Function to validate Total Experience
+        function validateTotalExperience() {
+            const totalExperience = parseInt(document.getElementById("total_experience").value);
+            const totalExperienceError = document.getElementById("total-experience-error");
+            if (isNaN(totalExperience) || totalExperience < 0 || totalExperience > 60) {
+                totalExperienceError.style.display = "block"; // Show error message
+            } else {
+                totalExperienceError.style.display = "none"; // Hide error message
+            }
+        }
+
+        // Function to validate Last New Job Gap
+        function validateLastJobGap() {
+            const lastJobGap = parseInt(document.getElementById("last_new_job_gap").value);
+            const lastJobGapError = document.getElementById("last-job-gap-error");
+            if (isNaN(lastJobGap) || lastJobGap < 0 || lastJobGap > 60) {
+                lastJobGapError.style.display = "block"; // Show error message
+            } else {
+                lastJobGapError.style.display = "none"; // Hide error message
+            }
+        }
+
+        // Adding event listeners for real-time validation
+        document.getElementById("city_development_index").addEventListener("input", validateCityDevelopmentIndex);
+        document.getElementById("total_experience").addEventListener("input", validateTotalExperience);
+        document.getElementById("last_new_job_gap").addEventListener("input", validateLastJobGap);
+    </script>
+    <!-- Prediction Modal -->
+    <div class="modal fade" id="predictionModal" tabindex="-1" aria-labelledby="predictionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="predictionModalLabel">Prediction Result</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Prediction result will be injected here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
